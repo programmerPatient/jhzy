@@ -1,0 +1,226 @@
+/* 标题居中 */
+h1, h2 {
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* 文件上传标题样式 */
+h2:first-of-type {
+    font-size: 24px;
+    color: #1e9fff;
+}
+
+/* 文件列表标题样式 */
+h2:last-of-type {
+    font-size: 22px;
+    color: #333;
+    margin-top: 40px; /* 增加顶部间距 */
+}
+
+
+/* 文件上传按钮容器，靠右边居中 */
+.upload-btn-container {
+    display: flex;                  /* 使用 Flexbox 布局 */
+    justify-content: center;        /* 水平居中 */
+    align-items: center;            /* 垂直居中 */
+    position: fixed;                /* 固定在页面位置 */
+    top: 50%;                       /* 垂直居中 */
+    right: 5px;                     /* 距离右边20px */
+    z-index: 9999;                  /* 确保按钮在页面最上层 */
+    background-color: rgba(255, 255, 255, 0.9); /* 可选：给按钮加个半透明背景 */
+    padding: 5px;                  /* 增加内边距，防止按钮太贴边 */
+    border-radius: 5px;             /* 按钮圆角 */
+}
+
+/* 隐藏默认的文件上传按钮 */
+.upload-btn-container input[type="file"] {
+    display: none;                  /* 隐藏原始的文件上传按钮 */
+}
+
+/* 自定义的文件上传按钮样式 */
+.upload-btn-container label {
+    display: inline-block;
+    padding: 4px;              /* 调整按钮大小，减少宽度和高度 */
+    background-color: #1e9fff;
+    color: white;
+    font-size: 12px;                 /* 减小字体 */
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    line-height: 28px;              /* 让文本垂直居中 */
+    height: 28px;                   /* 固定按钮高度 */
+}
+
+.upload-btn-container label:hover {
+    background-color: #0c7dbd;
+}
+/* 添加分界线 */
+.section-divider {
+    border-top: 2px solid #ddd;    /* 设置顶部边框线 */
+    margin: 20px 0;                 /* 上下间距 */
+}
+/* 文件卡片样式 */
+.file-card {
+    display: inline-block;
+    width: 240px; /* 默认宽度 */
+    margin: 10px 15px; /* 给卡片增加左右和上下间距 */
+    vertical-align: top;
+    background-color: #f0f8ff;
+    border: 2px solid #1e9fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    text-align: center;
+}
+
+/* 卡片样式：鼠标悬浮效果 */
+.file-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* 文件列表按钮 */
+.file-card a {
+    display: flex;                  /* 使用 Flexbox 布局 */
+    align-items: center;            /* 垂直居中 */
+    justify-content: center;        /* 水平居中 */
+    padding: 10px 20px;
+    background-color: #1e9fff;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    font-size: 16px;
+    height: 36px;                   /* 固定按钮高度 */
+    width: 100%;                    /* 按钮宽度占满容器 */
+}
+
+.file-card a:hover {
+    background-color: #0c7dbd;
+}
+
+.layui-card-header {
+    background-color: #1e9fff;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.layui-card-body {
+    padding: 20px;
+}
+
+
+.layui-btn-link {
+    background-color: #ff9800; /* 橙色获取链接按钮 */
+    color: white;
+}
+
+/* 文件操作按钮容器 */
+.file-btn-container {
+    display: flex;             /* 使用 Flexbox 布局 */
+    justify-content: center;   /* 居中显示按钮 */
+    gap: 15px;                 /* 按钮之间的间隔 */
+    margin-top: 15px;          /* 上方间距 */
+}
+
+/* 统一按钮宽度 */
+.file-btn-container a,
+.file-btn-container button {
+    width: 48%; /* 设置按钮宽度相同，占容器的 48% */
+    height: 36px; /* 固定按钮高度 */
+    text-align: center; /* 按钮文本居中 */
+}
+
+
+/* 显示修改时间的样式 */
+.file-info {
+    font-size: 14px;
+    color: #555;
+    margin: 10px 0; /* 上下间距 */
+    font-weight: normal;
+}
+
+.layui-btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+
+.layui-btn-download {
+    background-color: #4CAF50; /* 绿色下载按钮 */
+    color: white;
+}
+
+/* 文件列表卡片容器 */
+.layui-row {
+    display: flex;
+    flex-wrap: wrap; /* 允许换行 */
+    justify-content: center; /* 居中卡片 */
+    padding: 40px 15px; /* 增加内边距，避免卡片超出屏幕 */
+}
+
+
+/* 响应式设计：适应小屏幕设备 */
+@media (max-width: 767px) {
+    /* 卡片容器样式 */
+    .layui-row {
+        padding: 40px 5px; /* 给容器加左右内边距，避免卡片超出 */
+    }
+
+    .file-card {
+        width: 90%; /* 屏幕较小时，卡片宽度占满父容器 */
+        margin: 10px 10px; /* 减小卡片间距，上下间距保持，左右间距为 0 */
+        max-width: 100%; /* 保证卡片最大宽度不会超出父容器 */
+        box-sizing: border-box; /* 包含padding和border在内 */
+    }
+
+    .layui-card-headers {
+        height: 25px;
+        line-height: 25px;
+        font-size: 14px; /* 小屏幕时，卡片头部字体稍小 */
+    }
+    .layui-card-body {
+        padding: 5px 5px;
+    }
+
+
+    .file-btn-container {
+        flex-direction: row; /* 水平排列按钮 */
+        gap: 15px; /* 按钮之间的间隔 */
+        width: 100%; /* 容器宽度 100% */
+        justify-content: space-evenly; /* 按钮左右间隔相等 */
+    }
+
+    .file-btn-container a,
+    .file-btn-container button {
+        width: 40%; /* 两个按钮宽度设置为 48%，确保有间隔 */
+        height: 40px; /* 增加按钮高度 */
+        font-size: 11px; /* 提高字体大小 */
+    }
+
+    .upload-btn-container {
+        top: 40%; /* 在手机端适当调整位置 */
+        right: 10px;  /* 离右边稍远 */
+    }
+
+    .upload-btn-container label {
+        font-size: 12px;  /* 更小的字体 */
+        padding: 6px; /* 更小的按钮大小 */
+    }
+
+    /* 显示修改时间的样式 */
+    .file-info {
+        font-size: 14px;
+        color: #555;
+        margin: 5px; /* 上下间距 */
+        font-weight: normal;
+    }
+
+}

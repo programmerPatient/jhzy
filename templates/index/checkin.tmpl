@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件列表</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/layui/2.8.1/css/layui.css">
+    <link rel="stylesheet" href="/static/css/checkinstyle.css">
+    <style>
+        /* 自定义按钮样式 */
+        .pagination-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pagination-buttons .layui-btn {
+            margin: 0 10px; /* 按钮间距 */
+            padding: 0 20px; /* 按钮内边距 */
+            height: 40px; /* 按钮高度 */
+            line-height: 40px; /* 文字垂直居中 */
+            font-size: 16px; /* 字体大小 */
+        }
+        /* 固定顶部和底部按钮 */
+        .fixed-top, .fixed-bottom {
+            position: sticky;
+            z-index: 1000;
+            background: white;
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .fixed-top {
+            top: 0;
+        }
+        .fixed-bottom {
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="layui-container">
+        <!-- 固定在顶部的上一页按钮 -->
+        <div class="fixed-top">
+            <div class="pagination-buttons">
+                <button class="layui-btn layui-btn-primary" onclick="goToPreviousPage()">
+                    <i class="layui-icon layui-icon-prev"></i> 上一页
+                </button>
+            </div>
+        </div>
+
+        <div class="layui-row" id="fileList">
+            {{if .list}}
+                {{range .list}}
+                    <div class="layui-col-md3">
+                        <div class="layui-card file-card">
+                            <div class="layui-card-body">
+                                <p class="file-info">{{.Data}}</p>
+                                <p class="file-info" style="white-space: pre;">{{.CheckinContent}}</p>
+                                {{if .Status}}
+                                    <button class="layui-btn layui-btn-disabled layui-btn-xs layui-btn-checkin" disabled>已打卡</button>
+                                {{else}}
+                                    <button class="layui-btn layui-btn-normal layui-btn-xs layui-btn-checkin" onclick="confirmCheckIn('{{.UserId}}', '{{.Data}}', '{{.CheckinContent}}')">打卡</button>
+                                {{end}}
+                            </div>
+                        </div>
+                    </div>
+                {{end}}
+            {{end}}
+        </div>
+
+        <!-- 固定在底部的下一页按钮 -->
+        <div class="fixed-bottom">
+            <div class="pagination-buttons">
+                <button class="layui-btn layui-btn-primary" onclick="goToNextPage()">
+                    下一页 <i class="layui-icon layui-icon-next"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/layui/2.8.1/layui.js"></script>
+    <script>
+        let page = {{.page}}; // 当前页面
+        let id = {{.id}}; // 使用 JSON 格式传递数组
+
+        // 上一页功能
+        function goToPreviousPage() {
+            if (page > 1) {
+                page--;
+                window.location.href = `/checkin/index?id=${id}&page=${page}`;
+            } else {
+                layui.layer.msg('已经是第一页了', {icon: 0, time: 1500});
+            }
+        }
+
+        // 下一页功能
+        function goToNextPage() {
+            page++;
+            window.location.href = `/checkin/index?id=${id}&page=${page}`;
+        }
+
+        // 打卡确认弹窗
+        function confirmCheckIn(userId, fileId, checkinContent) {
+            layui.layer.confirm(`确定要打卡吗？<br>打卡时间：${fileId}<br>打卡内容：${checkinContent}`, {
+                title: '确认打卡',
+                icon: 3, // 问号图标
+                btn: ['确定', '取消'] // 按钮
+            }, function () {
+                // 用户点击“确定”
+                checkIn(userId, fileId,checkinContent);
+            }, function () {
+                // 用户点击“取消”
+                layui.layer.msg('已取消打卡', {icon: 2, time: 1500});
+            });
+        }
+
+        // 打卡功能
+        function checkIn(userId, fileId,checkinContent) {
+            fetch(`/checkin/click?userId=${userId}&time=${fileId}`, {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 0) {
+                    layui.layer.msg('打卡成功！', {icon: 1, time: 1500});
+                    updateFileStatus(userId, fileId,checkinContent);
+                } else {
+                    layui.layer.msg('打卡失败！', {icon: 5, time: 1500});
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                layui.layer.msg('网络错误，请重试！', {icon: 5, time: 1500});
+            });
+        }
+
+        // 更新文件状态
+        function updateFileStatus(userId, fileId, checkinContent) {
+            // 找到所有打卡按钮
+            const buttons = document.querySelectorAll('.layui-btn-checkin');
+            buttons.forEach(button => {
+                // 检查按钮的 onclick 属性是否匹配当前的 userId 和 fileId
+                if (button.getAttribute('onclick') === `confirmCheckIn('${userId}', '${fileId}', '${checkinContent}')`) {
+                    // 更新按钮状态
+                    button.textContent = '已打卡';
+                    button.classList.remove('layui-btn-normal');
+                    button.classList.add('layui-btn-disabled');
+                    button.disabled = true;
+                    // 移除 onclick 事件，防止重复点击
+                    button.removeAttribute('onclick');
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

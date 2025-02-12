@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件列表</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/layui/2.8.1/css/layui.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <div class="layui-container">
+        <form id="uploadForm" class="layui-form" action="/upload" method="post" enctype="multipart/form-data">
+            <div class="layui-form-item">
+                <!-- 文件上传按钮容器 -->
+                <div class="upload-btn-container">
+                    <!-- 隐藏的文件上传按钮 -->
+                    <input type="file" name="file" id="fileInput" />
+                    <!-- 自定义的上传按钮 -->
+                    <label for="fileInput">文件上传</label>
+                </div>
+            </div>
+        </form>
+
+        <!-- 分界线 -->
+        <div class="section-divider"></div>
+
+        <!-- 文件列表部分 -->
+        <h2>文件列表</h2>
+        <div class="layui-row" id="fileList">
+            {{if .files}}
+                {{range .files}}
+                    <div class="layui-col-md3">
+                        <div class="layui-card file-card">
+                            <div class="layui-card-header layui-card-headers">{{.Name}}</div>
+                            <div class="layui-card-body">
+                                <!-- 显示文件的修改时间 -->
+                                <p class="file-info">修改时间: {{.ModTime.Format "2006/01/02 15:04:05"}}</p>
+                                <!-- 文件操作按钮 -->
+                                <div class="file-btn-container">
+                                    <a href="/download/{{.Name}}" class="layui-btn layui-btn-download layui-btn-xs" download>下载</a>
+                                    <button class="layui-btn layui-btn-download layui-btn-xs" onclick="copyLink('http://file.maliweb.top/download/{{.Name}}')">获取下载链接</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {{end}}
+            {{else}}
+                <p>没有找到文件。</p>
+            {{end}}
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/layui/2.8.1/layui.js"></script>
+    <script>
+        layui.use('form', function() {
+            var form = layui.form;
+        });
+
+        // 监听文件选择事件，选择文件后立即上传
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            var file = event.target.files[0]; // 获取选择的第一个文件
+            if (file) {
+                // 使用 FormData 来处理文件上传
+                var formData = new FormData();
+                formData.append('file', file);
+
+                // 发送 AJAX 请求来上传文件
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        layui.layer.msg(data.message, {icon: 1, time: 1500});  // layui 弹框，成功提示
+
+                        // 动态更新文件列表
+                        updateFileList(data.files);  // 更新文件列表
+                    } else {
+                        layui.layer.msg('文件上传失败！', {icon: 5, time: 1500});  // 上传失败弹框
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    layui.layer.msg('文件上传失败！', {icon: 5, time: 1500});  // 上传失败弹框
+                });
+            }
+        });
+
+        // 更新文件列表的函数
+        function updateFileList(files) {
+            const fileListContainer = document.getElementById('fileList');
+            fileListContainer.innerHTML = ''; // 清空现有的文件列表
+
+            if (files.length === 0) {
+                fileListContainer.innerHTML = '<p>没有文件。</p>';
+            } else {
+                files.forEach(file => {
+                    const fileCard = document.createElement('div');
+                    fileCard.classList.add('layui-col-md3'); // 设置卡片的列宽度
+                    fileCard.innerHTML = `
+                        <div class="layui-card file-card">
+                            <div class="layui-card-header">${file.Name}</div>
+                            <div class="layui-card-body">
+                                <!-- 显示文件的修改时间 -->
+                                <p class="file-info">修改时间: ${new Date(file.ModTime).toLocaleString()}</p>
+
+                                <!-- 文件操作按钮 -->
+                                <div class="file-btn-container">
+                                    <a href="/download/${file.Name}" class="layui-btn layui-btn-download layui-btn-xs" download>下载</a>
+                                    <button class="layui-btn layui-btn-download layui-btn-xs" onclick="copyLink('/download/${file.Name}')">获取下载链接</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    fileListContainer.appendChild(fileCard);
+                });
+            }
+        }
+
+        // 复制下载链接到剪贴板
+        function copyLink(url) {
+            if (navigator.clipboard) {
+                // 使用新的 Clipboard API 进行复制
+                navigator.clipboard.writeText(url)
+                    .then(() => {
+                        layui.layer.msg('下载链接已复制！', {icon: 1, time: 1500});
+                    })
+                    .catch(err => {
+                        // 如果复制失败，给出失败的提示
+                        layui.layer.msg('复制失败，请重试！', {icon: 5, time: 1500});
+                    });
+            } else {
+                // 如果浏览器不支持 Clipboard API，使用传统的 execCommand
+                var textarea = document.createElement("textarea");
+                textarea.value = url;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    var successful = document.execCommand('copy');
+                    if (successful) {
+                        layui.layer.msg('下载链接已复制！', {icon: 1, time: 1500});
+                    } else {
+                        layui.layer.msg('复制失败，请重试！', {icon: 5, time: 1500});
+                    }
+                } catch (err) {
+                    layui.layer.msg('复制失败，请重试！', {icon: 5, time: 1500});
+                }
+                document.body.removeChild(textarea);
+            }
+        }
+    </script>
+
+</body>
+</html>
