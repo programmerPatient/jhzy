@@ -24,8 +24,8 @@ import (
  * @param {map[string]interface{}} where 条件
  * @param {...string} field
  */
-func OrderGetInfo(ctx context.Context, order string, where map[string]interface{}, field ...string) []Checkin {
-	var app_product []Checkin
+func OrderGetInfo(ctx context.Context, order string, where map[string]interface{}, field ...string) []CheckinInfo {
+	var app_product []CheckinInfo
 	database.DB.WithContext(ctx).Preload("User").Where(where).Select(field).Order(order).Find(&app_product)
 	return app_product
 }
@@ -41,8 +41,8 @@ func OrderGetInfo(ctx context.Context, order string, where map[string]interface{
  * @param {map[string]interface{}} where 条件
  * @param {...string} field
  */
-func GetInfo(ctx context.Context, where map[string]interface{}, field ...string) []Checkin {
-	var app_product []Checkin
+func GetInfo(ctx context.Context, where map[string]interface{}, field ...string) []CheckinInfo {
+	var app_product []CheckinInfo
 	database.DB.WithContext(ctx).Preload("User").Where(where).Select(field).Find(&app_product)
 	return app_product
 }
@@ -56,7 +56,7 @@ func GetInfo(ctx context.Context, where map[string]interface{}, field ...string)
  * @Example:
  * @param {map[string]interface{}} data
  */
-func CreateByStruct(ctx context.Context, data *Checkin) error {
+func CreateByStruct(ctx context.Context, data *CheckinInfo) error {
 	db := database.DB
 	result := db.WithContext(ctx).Create(data)
 	if err := result.Error; err != nil {

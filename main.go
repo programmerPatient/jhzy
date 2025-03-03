@@ -33,6 +33,7 @@ func main() {
 	router.POST("/upload", service.FileS.UploadFile)
 	router.GET("/checkin/index", service.CheckinS.Index)
 	router.POST("/checkin/click", service.CheckinS.Click)
+	router.GET("/checkin/total", service.CheckinS.Total)
 	router.GET("/content/index", service.ContentS.Index)
 	router.POST("/content/up", service.ContentS.Up)
 	setupDB()
@@ -46,12 +47,12 @@ func setupDB() {
 	var db gorm.Dialector
 	db = mysql.New(mysql.Config{
 		DSN: fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=%v&parseTime=True&multiStatements=true&loc=Local",
-			//"zmcs",
-			//"kZYmGhBJApZ4XFyW",
-			//"43.143.26.21",
-			"root",
-			"1234qwer!",
-			"127.0.0.1",
+			"zmcs",
+			"kZYmGhBJApZ4XFyW",
+			"43.143.26.21",
+			//"root",
+			//"1234qwer!",
+			//"127.0.0.1",
 			"3306",
 			"zmcs",
 			"utf8mb4",

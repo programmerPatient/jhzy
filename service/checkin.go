@@ -3,11 +3,13 @@ package service
 import (
 	"file/model/checkin"
 	"file/model/checkinTime"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/cast"
+	"file/model/user"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
 )
 
 var CheckinS = &CheckinService{}
@@ -16,8 +18,27 @@ type CheckinService struct {
 	BaseService
 }
 
+func (s *CheckinService) Total(c *gin.Context) {
+	userList := user.OrderGetInfo(c, "id asc", nil)
+	type Info struct {
+		UserId        int
+		UserName      string
+		CheckinCount  int64
+		LastCheckinAt string
+	}
+	var all []*Info
+	for _, userInfo := range userList {
+		all = append(all, &Info{
+			UserId:        userInfo.ID,
+			UserName:      userInfo.Name,
+			CheckinCount:  checkin.CheckinCount(c, userInfo.ID),
+			LastCheckinAt: checkin.CheckinLastTime(c, userInfo.ID),
+		})
+	}
+	s.HTML(c, "checktotal.tmpl", gin.H{"list": all})
+}
 func (s *CheckinService) Index(c *gin.Context) {
-	id := c.Query("id")
+	id := cast.ToInt(c.Query("id"))
 	page := c.Query("page")
 	//获取当前时间的前一周
 	startTime := time.Now().AddDate(0, 0, -2+7*cast.ToInt(page))
@@ -32,6 +53,7 @@ func (s *CheckinService) Index(c *gin.Context) {
 		Data           string
 		CheckinContent string
 		Status         int
+		IsToday        bool
 	}
 	haveAll := map[string]ListItem{}
 	for _, v := range list {
@@ -69,9 +91,14 @@ func (s *CheckinService) Index(c *gin.Context) {
 			Data:           vv.CheckinAt,
 			CheckinContent: vv.Content,
 			Status:         status,
+			IsToday:        vv.CheckinAt == time.Now().Format("2006-01-02"),
 		}
 	}
-	s.HTML(c, "checkin.tmpl", gin.H{"list": all, "id": id, "page": page})
+	blockButton := false
+	if id == 1 || id == 2 {
+		blockButton = true
+	}
+	s.HTML(c, "checkin.tmpl", gin.H{"list": all, "id": id, "blockButton": blockButton, "page": page})
 }
 func (s *CheckinService) Click(c *gin.Context) {
 	timeStr := c.Query("time")

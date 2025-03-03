@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打卡统计</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/layui/2.8.1/css/layui.css">
+    <style>
+        /* 页面整体样式 */
+        .statistics-container {
+            padding: 20px;
+        }
+
+        /* 标题居中 */
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* 表格样式 */
+        .statistics-table {
+            margin-top: 20px;
+        }
+
+        /* 返回按钮固定在底部中间 */
+        .fixed-bottom-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="layui-container statistics-container">
+        <h2>打卡统计</h2>
+        <table class="layui-table statistics-table">
+            <thead>
+                <tr>
+                    <th>用户名</th>
+                    <th>累计打卡次数</th>
+                    <th>最近打卡时间</th>
+                </tr>
+            </thead>
+            <tbody id="statisticsList">
+               {{if .list}}
+                    {{range .list}}
+                     <tr>
+                        <td>{{.UserName}}</td>
+                        <td>{{.CheckinCount}}</td>
+                        <td>{{.LastCheckinAt}}</td>
+                     </tr>
+                    {{end}}
+               {{end}}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 固定在底部的返回按钮 -->
+    <div class="fixed-bottom-button">
+        <button class="layui-btn layui-btn-primary" onclick="goBack()">
+            <i class="layui-icon layui-icon-return"></i> 返回
+        </button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/layui/2.8.1/layui.js"></script>
+    <script>
+        // 获取统计数据
+        function fetchStatistics() {
+            fetch('/checkin/statistics')
+                .then(response => response.json())
+                .then(data => {
+                    renderStatistics(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    layui.layer.msg('加载统计信息失败', {icon: 5, time: 1500});
+                });
+        }
+
+        // 渲染统计数据
+        function renderStatistics(data) {
+            const tbody = document.getElementById('statisticsList');
+            const content = data.map(item => `
+                <tr>
+                    <td>${item.userId}</td>
+                    <td>${item.userName}</td>
+                    <td>${item.checkinCount}</td>
+                    <td>${item.lastCheckinTime}</td>
+                </tr>
+            `).join('');
+            tbody.innerHTML = content;
+        }
+
+        // 返回上一页
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+</body>
+</html>

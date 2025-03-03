@@ -58,6 +58,18 @@ func CheckinIsExist(ctx context.Context, userId int, time string) bool {
 	return count > 0
 }
 
+func CheckinCount(ctx context.Context, userId int) int64 {
+	var count int64
+	database.DB.WithContext(ctx).Model(&Checkin{}).Where("user_id = ?", userId).Count(&count)
+	return count
+}
+
+func CheckinLastTime(ctx context.Context, userId int) string {
+	var app_product Checkin
+	database.DB.WithContext(ctx).Where("user_id = ?", userId).Order("checkin_at desc").First(&app_product)
+	return app_product.CheckinAt
+}
+
 /**
  * @Author: mali
  * @Func:

@@ -13,45 +13,534 @@
             margin: 20px 0;
         }
         .pagination-buttons .layui-btn {
-            margin: 0 10px; /* 按钮间距 */
-            padding: 0 20px; /* 按钮内边距 */
-            height: 40px; /* 按钮高度 */
-            line-height: 40px; /* 文字垂直居中 */
-            font-size: 16px; /* 字体大小 */
+            margin: 0 10px;
+            padding: 0 20px;
+            height: 40px;
+            line-height: 40px;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
+        .pagination-buttons .layui-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
         /* 固定顶部和底部按钮 */
         .fixed-top, .fixed-bottom {
             position: sticky;
             z-index: 1000;
-            background: white;
-            padding: 10px 0;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            box-shadow: 0 2px 15px rgba(148, 163, 184, 0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
         }
         .fixed-top {
             top: 0;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
         }
         .fixed-bottom {
             bottom: 0;
+            border-top: 1px solid rgba(226, 232, 240, 0.8);
+            margin-bottom: 0;
+            margin-top: 20px;
+        }
+
+        /* 基础卡片样式 */
+        .file-card {
+            border: none !important;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 4px 15px rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(148, 163, 184, 0.15);
+        }
+
+        .file-card .layui-card-body {
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .file-info {
+            color: #475569;
+            font-weight: 500;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+        }
+
+        /* 打卡按钮样式 */
+        .layui-btn-checkin {
+            border-radius: 6px;
+            padding: 0 16px;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+        }
+
+        .layui-btn-normal.layui-btn-checkin {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+        }
+
+        .layui-btn-normal.layui-btn-checkin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .layui-btn-disabled.layui-btn-checkin {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        /* 已打卡卡片样式 */
+        .file-card.checked {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .checked .file-info {
+            color: #64748b;
+        }
+
+        /* 今日卡片样式 */
+        .today-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+            animation: todayCardPulse 2s infinite;
+        }
+
+        .today-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(99, 102, 241, 0.2) 50%,
+                transparent 100%
+            );
+            animation: shine 3s infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .today-badge {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-weight: 600;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            animation: badgeBounce 1.5s ease infinite;
+            z-index: 2;
+        }
+
+        /* 完成打卡后的样式 */
+        .checked-mark {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            color: #10b981;
+            font-size: 20px;
+            z-index: 3;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        /* 动画定义 */
+        @keyframes shine {
+            0% {
+                transform: translate(-30%, -30%) rotate(0deg);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.3;
+            }
+            30% {
+                opacity: 0;
+            }
+            100% {
+                transform: translate(30%, 30%) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes todayCardPulse {
+            0% {
+                box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(99, 102, 241, 0.25);
+            }
+            100% {
+                box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+            }
+        }
+
+        @keyframes badgeBounce {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-5px) rotate(-3deg);
+            }
+            75% {
+                transform: translateY(-3px) rotate(3deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 自定义确认弹窗样式 */
+        .custom-confirm-dialog {
+            border-radius: 12px !important;
+            overflow: hidden;
+            max-width: 90vw !important;
+            min-width: 280px !important;
+            width: 400px !important;
+        }
+
+        @media screen and (max-width: 768px) {
+            .custom-confirm-dialog {
+                width: 90vw !important;
+                margin: 10px !important;
+            }
+            
+            .custom-confirm-dialog .layui-layer-title {
+                padding: 12px 16px;
+                font-size: 16px;
+            }
+
+            .custom-confirm-dialog .layui-layer-content {
+                padding: 16px;
+                font-size: 14px;
+            }
+
+            .custom-confirm-dialog .layui-layer-btn {
+                padding: 12px 16px;
+            }
+
+            .custom-confirm-dialog .layui-layer-btn a {
+                padding: 6px 16px;
+                font-size: 13px;
+            }
+        }
+
+        .custom-confirm-dialog .layui-layer-title {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .custom-confirm-dialog .layui-layer-content {
+            padding: 24px;
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .custom-confirm-dialog .layui-layer-btn {
+            padding: 16px 24px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            text-align: center !important;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .custom-confirm-dialog .layui-layer-btn a {
+            border-radius: 8px;
+            padding: 8px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+            float: none !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px;
+        }
+
+        .custom-confirm-dialog .layui-layer-btn .layui-layer-btn0 {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+            margin-right: 0 !important;
+        }
+
+        .custom-confirm-dialog .layui-layer-btn .layui-layer-btn1 {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            margin-left: 0 !important;
+        }
+
+        .custom-confirm-dialog .layui-layer-close {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: normal;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            right: 16px;
+            top: 16px;
+        }
+
+        .custom-confirm-dialog .layui-layer-close:hover {
+            color: #1e293b;
+            transform: rotate(90deg);
+        }
+
+        .custom-confirm-dialog .layui-layer-btn .layui-layer-btn0:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .custom-confirm-dialog .layui-layer-btn .layui-layer-btn1:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+        }
+
+        /* 确认内容样式 */
+        .confirm-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .confirm-content .checkin-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .confirm-content .checkin-detail {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        @media screen and (max-width: 768px) {
+            .layui-container {
+                padding: 0 8px;
+            }
+            
+            .layui-col-xs6 {
+                padding: 0 4px;
+            }
+
+            .file-card {
+                margin-bottom: 12px;
+            }
+
+            .file-card .layui-card-body {
+                padding: 12px;
+            }
+
+            .file-info {
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+
+            .layui-btn-xs {
+                padding: 0 10px;
+                font-size: 12px;
+                height: 28px;
+                line-height: 28px;
+            }
+
+            .today-badge {
+                padding: 4px 10px;
+                font-size: 0.8em;
+                top: 8px;
+                right: 8px;
+            }
+        }
+
+        @media screen and (max-width: 320px) {
+            .layui-container {
+                padding: 0 4px;
+            }
+            
+            .layui-col-xs6 {
+                padding: 0 2px;
+            }
+
+            .file-card .layui-card-body {
+                padding: 10px;
+            }
+
+            .file-info {
+                font-size: 0.85em;
+                margin-bottom: 6px;
+            }
+        }
+
+        /* 导航按钮容器样式 */
+        .fixed-top, .fixed-bottom {
+            position: sticky;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            box-shadow: 0 2px 15px rgba(148, 163, 184, 0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+        .fixed-top {
+            top: 0;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .fixed-bottom {
+            bottom: 0;
+            border-top: 1px solid rgba(226, 232, 240, 0.8);
+            margin-bottom: 0;
+            margin-top: 20px;
+        }
+
+        /* 导航按钮样式 */
+        .pagination-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .pagination-buttons .layui-btn {
+            height: 40px;
+            line-height: 40px;
+            padding: 0 24px;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pagination-buttons .layui-btn-primary {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .pagination-buttons .layui-btn-primary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #475569;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(148, 163, 184, 0.1);
+        }
+
+        .pagination-buttons .layui-btn-normal {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+        }
+
+        .pagination-buttons .layui-btn-normal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .pagination-buttons .layui-icon {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        .pagination-buttons .layui-btn:hover .layui-icon {
+            transform: scale(1.1);
+        }
+
+        @media screen and (max-width: 768px) {
+            .fixed-top, .fixed-bottom {
+                padding: 12px 0;
+            }
+
+            .pagination-buttons {
+                gap: 12px;
+            }
+
+            .pagination-buttons .layui-btn {
+                height: 36px;
+                line-height: 36px;
+                padding: 0 16px;
+                font-size: 14px;
+                border-radius: 8px;
+            }
+
+            .pagination-buttons .layui-icon {
+                font-size: 12px;
+            }
+        }
+
+        @media screen and (max-width: 320px) {
+            .pagination-buttons .layui-btn {
+                padding: 0 12px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="layui-container">
-        <!-- 固定在顶部的上一页按钮 -->
+        <!-- 固定在顶部的导航按钮 -->
         <div class="fixed-top">
             <div class="pagination-buttons">
                 <button class="layui-btn layui-btn-primary" onclick="goToPreviousPage()">
-                    <i class="layui-icon layui-icon-prev"></i> 上一页
+                    <i class="layui-icon layui-icon-prev"></i>上一页
                 </button>
+                {{if .blockButton}}
+                <button class="layui-btn layui-btn-normal" onclick="goToStatisticsPage()">
+                    <i class="layui-icon layui-icon-chart"></i>查看统计
+                </button>
+                {{end}}
             </div>
         </div>
 
         <div class="layui-row" id="fileList">
             {{if .list}}
                 {{range .list}}
-                    <div class="layui-col-md3">
-                        <div class="layui-card file-card">
+                    <div class="layui-col-xs6 layui-col-sm6 layui-col-md3">
+                        <div class="layui-card file-card {{if .IsToday}}today-card{{end}}" data-date="{{.Data}}">
                             <div class="layui-card-body">
                                 <p class="file-info">{{.Data}}</p>
                                 <p class="file-info" style="white-space: pre;">{{.CheckinContent}}</p>
@@ -60,6 +549,9 @@
                                 {{else}}
                                     <button class="layui-btn layui-btn-normal layui-btn-xs layui-btn-checkin" onclick="confirmCheckIn('{{.UserId}}', '{{.Data}}', '{{.CheckinContent}}')">打卡</button>
                                 {{end}}
+                                {{if .IsToday}}
+                                    <div class="today-badge">今日</div>
+                                {{end}}
                             </div>
                         </div>
                     </div>
@@ -67,29 +559,28 @@
             {{end}}
         </div>
 
-        <!-- 固定在底部的下一页按钮 -->
+        <!-- 固定在底部的导航按钮 -->
         <div class="fixed-bottom">
             <div class="pagination-buttons">
                 <button class="layui-btn layui-btn-primary" onclick="goToNextPage()">
-                    下一页 <i class="layui-icon layui-icon-next"></i>
+                    下一页<i class="layui-icon layui-icon-next"></i>
                 </button>
             </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/layui/2.8.1/layui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         let page = {{.page}}; // 当前页面
         let id = {{.id}}; // 使用 JSON 格式传递数组
-
+        if (id === 1) {
+            document.getElementById("statisticsButton").style.display = "block";
+        }
         // 上一页功能
         function goToPreviousPage() {
-            if (page > 1) {
-                page--;
-                window.location.href = `/checkin/index?id=${id}&page=${page}`;
-            } else {
-                layui.layer.msg('已经是第一页了', {icon: 0, time: 1500});
-            }
+            page--;
+            window.location.href = `/checkin/index?id=${id}&page=${page}`;
         }
 
         // 下一页功能
@@ -98,23 +589,112 @@
             window.location.href = `/checkin/index?id=${id}&page=${page}`;
         }
 
+        // 跳转到统计页面
+        function goToStatisticsPage() {
+            window.location.href = `/checkin/total`; // 跳转到统计页面
+        }
+
         // 打卡确认弹窗
         function confirmCheckIn(userId, fileId, checkinContent) {
-            layui.layer.confirm(`确定要打卡吗？<br>打卡时间：${fileId}<br>打卡内容：${checkinContent}`, {
-                title: '确认打卡',
-                icon: 3, // 问号图标
-                btn: ['确定', '取消'] // 按钮
-            }, function () {
-                // 用户点击“确定”
-                checkIn(userId, fileId,checkinContent);
-            }, function () {
-                // 用户点击“取消”
-                layui.layer.msg('已取消打卡', {icon: 2, time: 1500});
+            const confirmContent = `
+                <div class="confirm-content">
+                    <div class="checkin-title">您确定要打卡吗？</div>
+                    <div class="checkin-detail">${checkinContent}</div>
+                </div>
+            `;
+            
+            layui.use(['layer'], function() {
+                const layer = layui.layer;
+                
+                // 计算合适的弹窗宽度
+                const calculateDialogWidth = () => {
+                    const windowWidth = window.innerWidth;
+                    if (windowWidth <= 768) {
+                        return '90%';
+                    } else {
+                        return '400px';
+                    }
+                };
+                
+                let dialogIndex;
+                layer.confirm(confirmContent, {
+                    title: '打卡确认',
+                    icon: -1,
+                    btn: ['确认打卡', '取消'],
+                    skin: 'custom-confirm-dialog',
+                    area: [calculateDialogWidth(), 'auto'],
+                    offset: 'auto',
+                    btnAlign: 'center',
+                    closeBtn: 1,
+                    shade: 0.3,
+                    shadeClose: true,
+                    maxWidth: '90%',
+                    success: function(layero, index) {
+                        dialogIndex = index;
+                        const confirmBtn = layero.find('.layui-layer-btn0');
+                        const cancelBtn = layero.find('.layui-layer-btn1');
+                        const closeBtn = layero.find('.layui-layer-close');
+                        
+                        // 添加图标到按钮
+                        confirmBtn.prepend('<i class="layui-icon layui-icon-ok" style="margin-right: 8px;"></i>');
+                        cancelBtn.prepend('<i class="layui-icon layui-icon-close" style="margin-right: 8px;"></i>');
+
+                        // 移除默认图标容器的空间
+                        layero.find('.layui-layer-content').css('padding-top', '0');
+
+                        // 处理关闭按钮点击事件
+                        closeBtn.off('click').on('click', function(e) {
+                            e.preventDefault();
+                            layer.close(index);
+                            layer.msg('已取消打卡', {
+                                icon: -1,
+                                time: 1500,
+                                skin: 'custom-confirm-dialog'
+                            });
+                        });
+
+                        // 处理遮罩层点击事件
+                        $('.layui-layer-shade').off('click').on('click', function() {
+                            layer.close(index);
+                            layer.msg('已取消打卡', {
+                                icon: -1,
+                                time: 1500,
+                                skin: 'custom-confirm-dialog'
+                            });
+                        });
+
+                        // 监听窗口大小变化，动态调整弹窗大小
+                        const resizeDialog = () => {
+                            layero.width(calculateDialogWidth());
+                            layero.css({
+                                left: ($(window).width() - layero.width()) / 2
+                            });
+                        };
+
+                        $(window).off('resize.dialog').on('resize.dialog', resizeDialog);
+                        
+                        // 在弹窗关闭时移除事件监听
+                        layero.on('mouseup', function() {
+                            $(window).off('resize.dialog');
+                        });
+                    }
+                }, function() {
+                    // 用户点击"确认打卡"
+                    checkIn(userId, fileId);
+                    layer.close(dialogIndex);
+                }, function() {
+                    // 用户点击"取消"
+                    layer.msg('已取消打卡', {
+                        icon: -1,
+                        time: 1500,
+                        skin: 'custom-confirm-dialog'
+                    });
+                });
             });
         }
 
         // 打卡功能
-        function checkIn(userId, fileId,checkinContent) {
+        function checkIn(userId, fileId) {
             fetch(`/checkin/click?userId=${userId}&time=${fileId}`, {
                 method: 'POST',
             })
@@ -122,7 +702,7 @@
             .then(data => {
                 if (data.code === 0) {
                     layui.layer.msg('打卡成功！', {icon: 1, time: 1500});
-                    updateFileStatus(userId, fileId,checkinContent);
+                    updateCardStatus(userId, fileId);
                 } else {
                     layui.layer.msg('打卡失败！', {icon: 5, time: 1500});
                 }
@@ -133,23 +713,67 @@
             });
         }
 
-        // 更新文件状态
-        function updateFileStatus(userId, fileId, checkinContent) {
-            // 找到所有打卡按钮
-            const buttons = document.querySelectorAll('.layui-btn-checkin');
-            buttons.forEach(button => {
-                // 检查按钮的 onclick 属性是否匹配当前的 userId 和 fileId
-                if (button.getAttribute('onclick') === `confirmCheckIn('${userId}', '${fileId}', '${checkinContent}')`) {
+        // 更新卡片状态
+        function updateCardStatus(userId, fileId) {
+            // 找到对应的卡片
+            const cards = document.querySelectorAll('.file-card');
+            cards.forEach(card => {
+                if (card.querySelector('.layui-btn-checkin') && 
+                    card.querySelector('.layui-btn-checkin').getAttribute('onclick') && 
+                    card.querySelector('.layui-btn-checkin').getAttribute('onclick').includes(fileId)) {
+                    
                     // 更新按钮状态
+                    const button = card.querySelector('.layui-btn-checkin');
                     button.textContent = '已打卡';
                     button.classList.remove('layui-btn-normal');
                     button.classList.add('layui-btn-disabled');
                     button.disabled = true;
-                    // 移除 onclick 事件，防止重复点击
                     button.removeAttribute('onclick');
+
+                    // 添加已打卡的视觉效果
+                    card.style.position = 'relative';
+                    
+                    // 添加完成标记
+                    const checkmark = document.createElement('div');
+                    checkmark.innerHTML = '<i class="layui-icon layui-icon-ok-circle"></i>';
+                    checkmark.style.cssText = `
+                        position: absolute;
+                        top: 12px;
+                        left: 12px;
+                        color: #10B981;
+                        font-size: 20px;
+                        z-index: 3;
+                        animation: fadeIn 0.3s ease-in-out;
+                    `;
+                    card.appendChild(checkmark);
+
+                    // 添加淡入动画
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes fadeIn {
+                            from { opacity: 0; transform: scale(0.8); }
+                            to { opacity: 1; transform: scale(1); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+
+                    // 更新卡片样式
+                    card.style.background = 'linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%)';
+                    card.style.borderColor = '#10B981';
+                    
+                    // 添加完成效果的动画
+                    card.animate([
+                        { transform: 'scale(1)', opacity: '0.8' },
+                        { transform: 'scale(1.02)', opacity: '1' },
+                        { transform: 'scale(1)', opacity: '1' }
+                    ], {
+                        duration: 300,
+                        easing: 'ease-in-out'
+                    });
                 }
             });
         }
+
     </script>
 
 </body>

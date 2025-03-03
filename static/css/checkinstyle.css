@@ -267,3 +267,187 @@ h2:last-of-type {
     }
 
 }
+
+
+/* 自定义按钮样式 */
+.pagination-buttons {
+    text-align: center;
+    margin: 20px 0;
+}
+.pagination-buttons .layui-btn {
+    margin: 0 10px; /* 按钮间距 */
+    padding: 0 20px; /* 按钮内边距 */
+    height: 40px; /* 按钮高度 */
+    line-height: 40px; /* 文字垂直居中 */
+    font-size: 16px; /* 字体大小 */
+}
+/* 固定顶部和底部按钮 */
+.fixed-top, .fixed-bottom {
+    position: sticky;
+    z-index: 1000;
+    background: white;
+    padding: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.fixed-top {
+    top: 0;
+}
+.fixed-bottom {
+    bottom: 0;
+}
+/* 今日卡片的特效样式 */
+.today-card {
+    border: none !important;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+    transform-origin: center;
+    animation: todayCardPulse 2s infinite;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+/* 添加闪光效果 */
+.today-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 0%,
+        rgba(99, 102, 241, 0.2) 50%,
+        transparent 100%
+    );
+    animation: shine 3s infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes shine {
+    0% {
+        transform: translate(-30%, -30%) rotate(0deg);
+        opacity: 0;
+    }
+    15% {
+        opacity: 0.3;
+    }
+    30% {
+        opacity: 0;
+    }
+    100% {
+        transform: translate(30%, 30%) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+@keyframes todayCardPulse {
+    0% {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(99, 102, 241, 0.25);
+        transform: scale(1.02);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+        transform: scale(1);
+    }
+}
+
+.today-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 12px 24px rgba(99, 102, 241, 0.2);
+    background: linear-gradient(135deg, #ffffff 0%, #f0f1ff 100%);
+}
+
+.today-badge {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-weight: 600;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    animation: badgeBounce 1.5s ease infinite;
+    z-index: 2;
+}
+
+@keyframes badgeBounce {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-5px) rotate(-3deg);
+    }
+    75% {
+        transform: translateY(-3px) rotate(3deg);
+    }
+}
+
+.today-card .layui-card-body {
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    z-index: 2;
+}
+
+.today-card .file-info {
+    color: #4338ca;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    animation: textPulse 2s infinite;
+}
+
+@keyframes textPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* 添加边框动画效果 */
+.today-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(90deg, 
+        #6366f1 0%, 
+        #4f46e5 25%, 
+        #4338ca 50%, 
+        #4f46e5 75%, 
+        #6366f1 100%
+    );
+    border-radius: 12px;
+    animation: borderGradient 4s linear infinite;
+    z-index: 0;
+    opacity: 0.3;
+}
+
+@keyframes borderGradient {
+    0% {
+        background-position: 0% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+/* 添加内容区域的投影效果 */
+.today-card .layui-card-body {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+}
